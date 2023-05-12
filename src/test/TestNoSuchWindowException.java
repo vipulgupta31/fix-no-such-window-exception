@@ -9,7 +9,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchWindowException;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.safari.SafariOptions;
 import org.openqa.selenium.support.ui.*;
 
 public class TestNoSuchWindowException {
@@ -22,17 +22,17 @@ public class TestNoSuchWindowException {
 	@BeforeTest
 	public void setup() {
 		try {
-			ChromeOptions chromeOptions = new ChromeOptions();
-			chromeOptions.setPlatformName("Windows 10");
-			chromeOptions.setBrowserVersion("110.0");
+			SafariOptions safariOptions = new SafariOptions();
+			safariOptions.setPlatformName("MacOS Ventura");
+			safariOptions.setBrowserVersion("16.0");
 
 			HashMap<String, Object> ltOptions = new HashMap<String, Object>();
 			ltOptions.put("build", "NoSuchWindowException in Selenium");
 			ltOptions.put("name", "Handling NoSuchWindowException");
-			chromeOptions.setCapability("LT:Options", ltOptions);
+			safariOptions.setCapability("LT:Options", ltOptions);
 
 			driver = new RemoteWebDriver(
-					new URL("https://" + username + ":" + accessKey + "@hub.lambdatest.com/wd/hub"), chromeOptions);
+					new URL("https://" + username + ":" + accessKey + "@hub.lambdatest.com/wd/hub"), safariOptions);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
