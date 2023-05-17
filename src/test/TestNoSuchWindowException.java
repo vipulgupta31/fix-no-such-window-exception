@@ -23,20 +23,21 @@ public class TestNoSuchWindowException {
 	public void setup() {
 		try {
 			SafariOptions safariOptions = new SafariOptions();
-			safariOptions.setPlatformName("MacOS Ventura");
-			safariOptions.setBrowserVersion("16.0");
-
+			safariOptions.setPlatformName("MacOS Big sur");
+			safariOptions.setBrowserVersion("14.0");
+			
 			HashMap<String, Object> ltOptions = new HashMap<String, Object>();
 			ltOptions.put("build", "NoSuchWindowException in Selenium");
 			ltOptions.put("name", "Handling NoSuchWindowException");
+			ltOptions.put("w3c", true);
 			safariOptions.setCapability("LT:Options", ltOptions);
-
+			
 			driver = new RemoteWebDriver(
 					new URL("https://" + username + ":" + accessKey + "@hub.lambdatest.com/wd/hub"), safariOptions);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		driver.get("https://www.lambdatest.com/selenium-playground/window-popup-modal-demo");
+		 driver.get("https://www.lambdatest.com/selenium-playground/window-popup-modal-demo");
 	}
 
 	@AfterTest
@@ -49,8 +50,15 @@ public class TestNoSuchWindowException {
 		
 		System.out.println("Clicking on Follow button");
 		driver.findElement(By.xpath("//*[@title='Follow @Lambdatesting on Twitter']")).click();
-		//Switching window with incorrect handle.
-		driver.switchTo().window("abc123");
+		
+		Set<String> handles = driver.getWindowHandles();
+		for(String handle : handles)
+		{
+			System.out.println("Valid handle value : " + handle);
+			//adding -updated to valid handle value to demonstrate exception 
+			//due to invalid handle value
+			driver.switchTo().window(handle + "-updated");
+		}
 	}
 
 	@Test
@@ -59,7 +67,7 @@ public class TestNoSuchWindowException {
 		System.out.println("Clicking on Follow button");
 		driver.findElement(By.xpath("//*[@title='Follow @Lambdatesting on Twitter']")).click();
 		
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 		wait.until(ExpectedConditions.numberOfWindowsToBe(2));
 		System.out.println("Verified total windows are 2");
 		
@@ -85,15 +93,24 @@ public class TestNoSuchWindowException {
 	
 	@Test
 	public void testNoSuchWindowException_fix_tryCatch() {
+		
+		System.out.println("Clicking on Follow button");
+		driver.findElement(By.xpath("//*[@title='Follow @Lambdatesting on Twitter']")).click();
+		
 		try 
 		{
-			System.out.println("Clicking on Follow button");
-			driver.findElement(By.xpath("//*[@title='Follow @Lambdatesting on Twitter']")).click();
-			System.out.println("Trying to switch to new window");
-			driver.switchTo().window("abc123");
+			Set<String> handles = driver.getWindowHandles();
+			for(String handle : handles)
+			{
+				System.out.println("Valid handle value : " + handle);
+				//adding -updated to valid handle value to get exception 
+				//due to invalid handle value
+				System.out.println("Invalid handle value used : " + handle + "-updated");
+				driver.switchTo().window(handle + "-updated");
+			}
 		} catch (NoSuchWindowException ex) {
 			System.out.println("We are inside catch block");
-			System.out.println("NoSuchWindowException has been handled.");
+			System.out.println("NoSuchWindowException has been caught.");
 		}
 	}
 
